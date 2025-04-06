@@ -4,14 +4,14 @@ import Chatbot from '@/models/chatbot'
 import React from 'react'
 
 const page = async () => {
-  await connectDB()
-  const chatbots = await Chatbot.find()
-  console.log(chatbots);
-  
+  // await connectDB()
+  // const chatbots = await Chatbot.find()
+  // console.log(chatbots);
+
 
   return (
     <main className="container">
-hello
+      hello
     </main>
   )
 }
