@@ -13,6 +13,4 @@ export async function createChatbot(formData) {
         clerk_user_id: userId,
         name: formData.get('chatbot_name')
     });
-
-
 }
