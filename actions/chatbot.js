@@ -3,7 +3,7 @@
 import { connectDB } from "@/DB/connect";
 import Chatbot from "@/models/chatbot";
 import { auth } from '@clerk/nextjs/server'
-
+import { redirect } from 'next/navigation';
 
 
 export async function createChatbot(formData) {
@@ -13,4 +13,5 @@ export async function createChatbot(formData) {
         clerk_user_id: userId,
         name: formData.get('chatbot_name')
     });
+    redirect(`/edit-chatbot/${chatbot._id}`)
 }
