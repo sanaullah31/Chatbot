@@ -2,15 +2,23 @@
 
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams, useRouter } from "next/navigation";
-import { FaCopy, FaRobot, FaLink, FaSpinner, FaTrash } from 'react-icons/fa';
+import { useParams, useRouter } from "next/navigation"
+import { FaCopy, FaRobot, FaLink, FaSpinner, FaTrash } from 'react-icons/fa'
+import Characterestics from "@/components/Characterestics"
+import { IoIosAddCircle } from "react-icons/io";
+import { addCharacteristics } from "@/actions/chatbot";
+
+
+
 
 const Page = () => {
     const params = useParams()
-    const [loading, setLoading] = useState(false);
-    const [chatbotName, setChatbotName] = useState('');
-    const [url, setUrl] = useState('');
-    const [copied, setCopied] = useState(false);
+    const [loading, setLoading] = useState(false)
+    const [chatbotName, setChatbotName] = useState('')
+    const [url, setUrl] = useState('')
+    const [copied, setCopied] = useState(false)
+    const [characteristics, setCharacteristics] = useState("")
+    const [chars, setChars] = useState([])
 
     const router = useRouter()
     const base_url = 'http://localhost:3000'
@@ -19,15 +27,16 @@ const Page = () => {
     useEffect(() => {
         setUrl(`${base_url}/chatbot/${params.id}`)
         getChat()
+        getChatChars()
     }, [params.id])
 
     const getChat = async () => {
         setLoading(true)
         try {
-            const res = await axios.get(`/api/chatbot?id=${params.id}`);
+            const res = await axios.get(`/api/chatbot?id=${params.id}`)
             setChatbotName(res.data.chatbot.name)
         } catch (error) {
-            console.error("Error fetching chatbot:", error);
+            console.error("Error fetching chatbot:", error)
         } finally {
             setLoading(false)
         }
@@ -35,12 +44,11 @@ const Page = () => {
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(url).then(() => {
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-        });
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        })
     }
 
-    //  delete a chatbot
     const handleDeleteChat = async () => {
         setLoading(true)
         const res = await axios.delete(`/api/chatbot?id=${params.id}`)
@@ -49,94 +57,181 @@ const Page = () => {
         }
         setLoading(false)
     }
+    const addCharacteristicsHandler = async (e) => {
+        e.preventDefault()
+        setLoading(true)
+        const formData = new FormData()
+        formData.set("characteristics", characteristics)
+        formData.set("chatbotId", params.id)
+        await addCharacteristics(formData)
+        setLoading(false)
+        setCharacteristics("")
+        await getChatChars()
+    }
+    const getChatChars = async () => {
+        const res = await axios.get(`/api/chatbot/characteristics?id=${params.id}`)
+        setChars(res.data.chars)
+    }
+    const deleteChar = async (id) => {
+        setLoading(true)
+        await axios.delete(`/api/chatbot/characteristics?char_id=${id}`)
+        setLoading(false)
+        await getChatChars()
+    }
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
+        <div className="max-w-2xl mx-auto p-4 space-y-6">
             {/* Header Section */}
-            <div className="flex items-center gap-3 mb-8">
-                <FaRobot className="text-blue-600 text-3xl" />
-                <h1 className="text-2xl font-bold text-gray-800">Edit Chatbot</h1>
+            <div className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm">
+                <div className="p-3 bg-blue-100 rounded-full">
+                    <FaRobot className="text-blue-600 text-2xl" />
+                </div>
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-800">Chatbot Settings</h1>
+                    <p className="text-gray-500 text-sm">Manage and customize your AI assistant</p>
+                </div>
             </div>
 
             {/* URL Sharing Card */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                    <FaLink className="text-blue-500" />
-                    Share Your Chatbot
-                </h2>
+            <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-50 rounded-lg">
+                        <FaLink className="text-blue-500" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-800">Share Your Chatbot</h2>
+                </div>
+
                 <p className="text-gray-600 mb-4">
-                    Share this link with your customers to start conversations with your AI assistant.
-                    Anyone with this link can interact with your chatbot.
+                    Share this link to let others interact with your AI assistant:
                 </p>
 
-                <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="relative flex-grow">
-                        <input
-                            type="text"
-                            readOnly
-                            value={url}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-700 pr-12"
-                        />
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Chatbot URL</label>
+                    <div className="flex gap-2">
+                        <div className="relative flex-grow">
+                            <input
+                                type="text"
+                                readOnly
+                                value={url}
+                                className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-700 pr-12"
+                            />
+                           
+                        </div>
+                        <button
+                            onClick={copyToClipboard}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg flex items-center gap-2 min-w-[100px] justify-center"
+                        >
+                            {copied ? 'Copied!' : 'Copy'}
+                        </button>
                     </div>
-                    <button
-                        onClick={copyToClipboard}
-                        className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center justify-center gap-2 min-w-[120px] transition-colors"
-                    >
-                        {copied ? 'Copied!' : (
-                            <>
-                                <FaCopy />
-                                Copy
-                            </>
-                        )}
-                    </button>
+                    {copied && (
+                        <p className="text-green-600 text-sm flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Link copied to clipboard
+                        </p>
+                    )}
                 </div>
-                {copied && <p className="text-green-600 text-sm mt-2">Link copied to clipboard!</p>}
             </div>
 
-            {/* Chatbot Info Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+            {/* Chatbot Details Card */}
+            <div className="bg-white rounded-xl shadow-sm py-6 px-2">
                 {loading ? (
-                    <div className="flex items-center justify-center gap-2 text-gray-600">
-                        <FaSpinner className="animate-spin" />
-                        Loading chatbot details...
+                    <div className="flex justify-center py-8">
+                        <FaSpinner className="animate-spin text-2xl text-blue-500" />
                     </div>
                 ) : (
                     <>
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-green-50 rounded-lg">
+                                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
                             <h2 className="text-xl font-semibold text-gray-800">Chatbot Details</h2>
-
                         </div>
+
                         <div className="space-y-4">
                             <div>
-                                <p className="text-sm font-medium text-gray-500">Chatbot Name</p>
-                                <p className="text-lg font-medium text-gray-800">{chatbotName || 'Not available'}</p>
+                                <label className="text-sm font-medium text-gray-500 block mb-1">Name</label>
+                                <p className="text-gray-800 p-2 bg-gray-50 rounded-lg">{chatbotName || 'Not available'}</p>
                             </div>
+
                             <div>
-                                <p className="text-sm font-medium text-gray-500">Chatbot ID</p>
-                                <p className="text-gray-800 font-mono">{params.id}</p>
+                                <label className="text-sm font-medium text-gray-500 block mb-1">Chatbot ID</label>
+                                <p className="font-mono text-gray-700 p-2 bg-gray-50 rounded-lg break-all">{params.id}</p>
                             </div>
-                            <div>
-                                <button
-                                    className="text-red-600 hover:text-red-800 flex items-center gap-2 px-4 py-2 border  rounded-md hover:bg-red-50 transition-colors"
-                                    onClick={handleDeleteChat}
-                                >
-                                    <FaTrash />
-                                    Delete Chatbot
-                                </button>
+                        </div>
+
+                        <div className="mt-6 pt-4 border-t border-gray-100">
+                            <button
+                                onClick={handleDeleteChat}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 border border-red-200 rounded-lg transition-colors"
+                            >
+                                <FaTrash />
+                                Delete Chatbot
+                            </button>
+                        </div>
+                        {/* Knowledge Base Card */}
+                        <div className="bg-white rounded-xl  py-6">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-purple-50 rounded-lg">
+                                    <svg className="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                                    </svg>
+                                </div>
+                                <h2 className="text-xl font-semibold text-gray-800">Knowledge Base</h2>
+                            </div>
+
+                            <p className="text-gray-600 mb-4">
+                                Add information to train your chatbot's responses:
+                            </p>
+
+                            <form onSubmit={addCharacteristicsHandler} className="mb-6">
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                        onChange={(e) => setCharacteristics(e.target.value)}
+                                        value={characteristics}
+                                        className="flex-grow px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-300"
+                                        type="text"
+                                        placeholder="Example: 'We offer free shipping on all orders'"
+                                        disabled={loading}
+                                        required
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg flex items-center gap-2 justify-center min-w-[100px]"
+                                    >
+                                        <IoIosAddCircle />
+                                        Add
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div className="border-t border-gray-100 pt-4">
+                                <h3 className="font-medium text-gray-700 mb-3">Current Knowledge</h3>
+                                {chars.length > 0 ? (
+                                    <ul className="space-y-3">
+                                        {chars.map((char, index) => (
+                                            <Characterestics key={index} char={char} deleteChar={deleteChar} loading={loading} />
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="bg-gray-50 rounded-lg p-4 text-center text-gray-500">
+                                        No knowledge added yet
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </>
                 )}
             </div>
 
-            {/* Additional Help Section */}
-            <div className="mt-8 bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <h3 className="font-medium text-blue-800 mb-2">Need help with sharing?</h3>
-                <p className="text-blue-700 text-sm">
-                    You can embed this chatbot on your website or share the link directly with users.
-                    The chatbot will respond based on the training data you've provided.
-                </p>
-            </div>
+
+
+
         </div>
     )
 }
