@@ -21,3 +21,20 @@ export async function GET(req) {
         })
     }
 }
+
+export async function DELETE(req) {
+	try {
+		connectDB()
+		const id = req.nextUrl.searchParams.get('id');
+		const chatbot = await Chatbot.findByIdAndDelete(id);
+
+		return NextResponse.json({
+			success: true
+		});
+
+	} catch (error) {
+		return NextResponse.json({
+			success: false
+		});
+	}
+}
