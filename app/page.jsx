@@ -1,13 +1,8 @@
 
-import { connectDB } from '@/DB/connect'
-import Chatbot from '@/models/chatbot'
 import Link from 'next/link'
 import React from 'react'
 
-const page = async () => {
-    await connectDB()
-    const chatbots = await Chatbot.find()
-    console.log(chatbots);
+const page = () => {
 
 
     return (
