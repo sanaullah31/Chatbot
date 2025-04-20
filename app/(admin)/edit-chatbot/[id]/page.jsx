@@ -21,8 +21,8 @@ const Page = () => {
     const [chars, setChars] = useState([])
 
     const router = useRouter()
-    const base_url = 'http://localhost:3000'
-    // const base_url = 'https://chat-bot-pbc.vercel.app'
+    // const base_url = 'http://localhost:3000'
+    const base_url = 'https://chat-bot-pbc.vercel.app'
 
     useEffect(() => {
         setUrl(`${base_url}/chatbot/${params.id}`)
