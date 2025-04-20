@@ -22,6 +22,7 @@ const MessagesContainer = ({ messages }) => {
             <MessageBubble key={message._id} message={message} />
           ))}
           <div ref={messagesEndRef} />
+          <p>loading</p>
         </div>
       ) : (
         <div className="text-center text-gray-500 pt-4">
