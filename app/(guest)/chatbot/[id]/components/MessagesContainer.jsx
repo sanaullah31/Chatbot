@@ -6,11 +6,16 @@ const MessagesContainer = ({ messages }) => {
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Add a small delay to ensure all content (including markdown) has rendered
+    const scrollTimer = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+    
+    return () => clearTimeout(scrollTimer);
   }, [messages]);
 
   return (
-    <div className="bg-gray-100 rounded-lg p-4 min-h-[400px] mb-4 overflow-y-auto max-h-[500px]">
+    <div className="w-full h-full">
       {messages && messages.length > 0 ? (
         <div className="space-y-2">
           {messages.map((message) => (
