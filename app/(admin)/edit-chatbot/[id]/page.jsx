@@ -53,7 +53,7 @@ const Page = () => {
         setLoading(true)
         const res = await axios.delete(`/api/chatbot?id=${params.id}`)
         if (res.status == 200) {
-            router.push('/create-chatbot')
+            router.push('/edit-chatbot')
         }
         setLoading(false)
     }

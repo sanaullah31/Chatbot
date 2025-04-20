@@ -7,7 +7,9 @@ import React, { useState } from 'react'
 const page = () => {
 	const [loading, setLoading] = useState(false);
 
-	const handleSubmit = async (formData) => {
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		const formData = new FormData(e.target);
 		setLoading(true);
 		try {
 			// Call the server action
@@ -34,7 +36,7 @@ const page = () => {
 				</p>
 			</div>
 
-			<form action={handleSubmit} className="space-y-6">
+			<form onSubmit={handleSubmit} className="space-y-6">
 				<div>
 					<label htmlFor="chatbot_name" className="block text-sm font-medium text-gray-700 mb-2">
 						Chatbot Name
