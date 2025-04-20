@@ -10,7 +10,7 @@ import { redirect } from 'next/navigation';
 
 export async function createChatbot(formData) {
     const { userId } = await auth()
-    connectDB()
+    await connectDB()
     const chatbot = await Chatbot.create({
         clerk_user_id: userId,
         name: formData.get('chatbot_name')
@@ -21,7 +21,7 @@ export async function createChatbot(formData) {
 
 export async function addCharacteristics(formData) {
     console.log(formData)
-    connectDB()
+    await connectDB()
     const chatChar = await ChatbotChar.create({
         chatbot_id: formData.get('chatbotId'),
         content: formData.get('characteristics'),

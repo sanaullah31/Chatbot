@@ -41,7 +41,7 @@ const page = () => {
 			<Link
 				href={`/edit-chatbot/${chatbot._id}`}
 				key={chatbot._id}
-				className="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 group"
+				className="flex mx-4 items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 group"
 			>
 				<div className="bg-blue-100 p-3 rounded-full mr-4">
 					<FaRobot className="text-blue-600 text-xl" />
