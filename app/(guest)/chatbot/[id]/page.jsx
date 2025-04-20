@@ -55,39 +55,27 @@ const page = () => {
             
             e.target.message.value = ''; // Clear input after sending
             
-            console.log("Sending message:", {
-                sessionId: sessionId,
-                chatId: params.id,
-                message: messageText,
-                name: name
-            });
-            
             const res = await axios.post(`/api/messages/send?session_id=${sessionId}&chat_id=${params.id}`, {
                 message: messageText,
                 sender: 'user',
                 name
             });
-            console.log("Message response:", res.data);
+            console.log(res);
+            
             
             if (res.data.success) {
                 setMessages(res.data.allMessages);
             }
         } catch (error) {
             console.error('Error sending message:', error);
-            if (error.response) {
-                console.error('Response data:', error.response.data);
-                console.error('Response status:', error.response.status);
-            }
         }
     }
 
 
     useEffect(() => {
         getChat()
-        if (sessionId) {
-            getAllSessionMessages()
-        }
-    }, [params.id, sessionId])
+        getAllSessionMessages()
+    }, [params.id, sessionId, messages.length])
 
     return (
         <main className="container mx-auto px-4 py-8 min-h-screen bg-gray-50">
