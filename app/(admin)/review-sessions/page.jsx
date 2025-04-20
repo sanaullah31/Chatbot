@@ -1,14 +1,15 @@
 'use client'
 
+import SessionCard from '@/components/SessionCard'
 import axios from 'axios'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { FaChevronRight, FaRobot, FaSpinner } from 'react-icons/fa'
 
 const page = () => {
-
 	const [allChatbots, setAllChatbots] = useState([])
 	const [loading, setLoading] = useState(false)
+
 
 	useEffect(() => {
 		getAllChatbots()
@@ -16,52 +17,64 @@ const page = () => {
 
 	const getAllChatbots = async () => {
 		setLoading(true)
-		const { data } = await axios.get('/api/chatbot/all');
-		console.log(data)
-		setLoading(false)
-		setAllChatbots(data.chatbots)
+		try {
+			const { data } = await axios.get('/api/chatbot/all');
+			setAllChatbots(data.chatbots)
+
+		} catch (error) {
+			console.error('Error fetching chatbots:', error)
+		} finally {
+			setLoading(false)
+		}
 	}
 
+	console.log(allChatbots);
 
 	return (
-		<div>
-			<div>
-				<h1>Active Chatbots Sessions</h1>
-				<p>See all conversation between your Chatbot and User.</p>
-			</div>
+		<div className="min-h-screen bg-gray-50 p-6">
+			<div className="max-w-4xl mx-auto">
+				{/* Header */}
+				<div className="mb-8">
+					<h1 className="text-3xl font-bold text-gray-800 mb-2">Active Chatbot Sessions</h1>
+					<p className="text-gray-600">View all conversations between your chatbots and users</p>
+				</div>
 
-			<div>
-				{loading && (
-					<div className="flex justify-center items-center py-12 gap-3">
-						<FaSpinner className="animate-spin text-blue-500 text-xl" />
-						<span className="text-gray-600">Loading chatbots...</span>
+				{/* Content */}
+				<div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+					{/* List header */}
+					<div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+						<h2 className="font-semibold text-gray-700">Your Chatbots</h2>
 					</div>
-				)}
-				{/* Chatbots list */}
-				{allChatbots && allChatbots.map((chatbot) => (
-					<div
-						
-						key={chatbot._id}
-						className="flex mx-4 items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 group"
-					>
-						<div className="bg-blue-100 p-3 rounded-full mr-4">
-							<FaRobot className="text-blue-600 text-xl" />
+
+					{/* Loading state */}
+					{loading && (
+						<div className="flex flex-col items-center justify-center py-12 gap-3">
+							<FaSpinner className="animate-spin text-blue-500 text-2xl" />
+							<span className="text-gray-600">Loading your chatbots...</span>
 						</div>
-						<div className="flex-1">
-							<h3 className="font-medium text-gray-800 group-hover:text-blue-600 transition-colors">
-								{chatbot.name}
-							</h3>
-							<p className="text-sm text-gray-500">
-								Created: {new Date(chatbot.created_at).toLocaleDateString('en-US', {
-									year: 'numeric',
-									month: 'short',
-									day: 'numeric'
-								})}
-							</p>
+					)}
+
+					{/* Empty state */}
+					{!loading && allChatbots.length === 0 && (
+						<div className="text-center py-12">
+							<div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+								<FaRobot className="text-blue-500 text-xl" />
+							</div>
+							<h3 className="text-lg font-medium text-gray-900 mb-1">No chatbots found</h3>
+							<p className="text-gray-500 max-w-md mx-auto">You haven't created any chatbots yet. Get started by creating your first one.</p>
+							<Link href="/create-chatbot" className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+								Create Chatbot
+							</Link>
 						</div>
-						<FaChevronRight className="text-gray-400 group-hover:text-blue-600 ml-2" />
-					</div>
-				))}
+					)}
+
+					{/* Chatbots list */}
+					{!loading && allChatbots.length > 0 && (
+						<div className="">
+							{allChatbots.map((chatbot) => <SessionCard key={chatbot._id} chatbot={chatbot} />)}
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	)
