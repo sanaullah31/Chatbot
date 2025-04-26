@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react'
 import MessagesContainer from './components/MessagesContainer'
 import { FaRobot, FaPaperPlane } from 'react-icons/fa'
 
-
 const page = () => {
     const params = useParams()
     const [isOpen, setIsOpen] = useState(true)
@@ -16,6 +15,7 @@ const page = () => {
     const [chatbot, setChatbot] = useState('')
     const [sessionId, setSessionId] = useState('')
     const [messages, setMessages] = useState([])
+    const [isTyping, setIsTyping] = useState(false)
 
     const createGuest = async (e) => {
         e.preventDefault()
@@ -44,7 +44,6 @@ const page = () => {
     const getAllSessionMessages = async () => {
         if (!sessionId) return;
         const res = await axios.get(`/api/messages/session-messages?sessionId=${sessionId}`);
-        console.log(res)
         setMessages(res.data.messages)
     }
 
@@ -66,8 +65,11 @@ const page = () => {
                 created_at: new Date().toISOString()
             };
             
-            // Add the message to the state immediately for better UX
+            // Add the user message to the state immediately
             setMessages(prevMessages => [...prevMessages, tempUserMessage]);
+            
+            // Show typing indicator
+            setIsTyping(true)
             
             // Send the message to the API
             const res = await axios.post(`/api/messages/send?session_id=${sessionId}&chat_id=${params.id}`, {
@@ -75,7 +77,6 @@ const page = () => {
                 sender: 'user',
                 name
             });
-            console.log(res);
             
             if (res.data.success) {
                 // Update with the complete message list from the server
@@ -83,9 +84,10 @@ const page = () => {
             }
         } catch (error) {
             console.error('Error sending message:', error);
+        } finally {
+            setIsTyping(false)
         }
     }
-
 
     useEffect(() => {
         getChat()
@@ -156,7 +158,7 @@ const page = () => {
                     
                     {/* Chat content area - takes remaining height */}
                     <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-                        <MessagesContainer messages={messages} />
+                        <MessagesContainer messages={messages} isLoading={isTyping} />
                     </div>
                     
                     {/* Sticky footer with message input */}

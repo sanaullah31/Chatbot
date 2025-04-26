@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import MessageBubble from './MessageBubble';
 
-const MessagesContainer = ({ messages }) => {
+const MessagesContainer = ({ messages, isLoading }) => {
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom when messages change
@@ -22,7 +22,11 @@ const MessagesContainer = ({ messages }) => {
             <MessageBubble key={message._id} message={message} />
           ))}
           <div ref={messagesEndRef} />
-          <p>loading</p>
+          {isLoading && (
+            <div className=" text-gray-500 py-2">
+              Thinking...
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center text-gray-500 pt-4">
@@ -33,4 +37,4 @@ const MessagesContainer = ({ messages }) => {
   );
 };
 
-export default MessagesContainer; 
+export default MessagesContainer;
