@@ -9,7 +9,7 @@ const page = () => {
         <main className="container mx-auto px-4 py-8">
             <div className="max-w-2xl mx-auto text-center bg-white rounded-lg shadow-md p-8">
                 <p className="text-gray-800 text-lg mb-6">
-                    Welcome to IntraChat AI<br />
+                    Welcome to MitraChat AI<br />
                     Create your first AI Chatbot for free.
                 </p>
                 <Link
