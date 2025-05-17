@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
-
+// Define the message schema
 const messageSchema = new Schema({
     chat_session_id: {
         type: Schema.Types.ObjectId,

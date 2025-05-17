@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-
+// Define the chatbot characteristics schema
 const chatbotCharacteristicsSchema = new Schema({
     chatbot_id: {
         type: Schema.Types.ObjectId,
