@@ -47,7 +47,7 @@ export async function POST(req) {
         // Combine characteristics to a system prompt
         const systemPrompt = characteristics.map((char) => char.content).join(" + ");
 
-        const messages = `You are a helpful assistant talking to ${body.name}. If a generic question is asked which is not relevant in the same scope or domain as the specific content, use emojis where possible. Here is some key information that you need to be aware of: ${systemPrompt} and previous conversations are ${formattedPreviousMessages}  now response as in markdown for ${body.message} `
+           const messages = `You are a helpful assistant talking to ${body.name} do not repeat user name again and again take it for first greeting only. If a generic question is asked which is not relevant in the same scope or domain as the specific content, use emojis where possible. Here is some key information that you need to be aware of: ${systemPrompt} and previous conversations are ${formattedPreviousMessages}  now response as in markdown for ${body.message}`
 
         // Generate AI response
         let aiResponse = await generateAIResponse(messages);
