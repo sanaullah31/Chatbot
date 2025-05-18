@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { FaSpinner } from 'react-icons/fa'
+import { format } from 'timeago.js'
 
 const Page = () => {
     const params = useParams()
@@ -80,7 +81,7 @@ const Page = () => {
                             >
                                 <div className="break-words">{message.content}</div>
                                 <div className="text-xs mt-1 opacity-50">
-                                    {new Date(message.created_at).toLocaleTimeString()}
+                                      {new Date(message.created_at).toLocaleTimeString()}
                                 </div>
                             </div>
                         </div>

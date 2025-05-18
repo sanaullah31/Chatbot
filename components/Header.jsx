@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { FaRobot, FaPlus, FaEdit, FaHistory, FaBars, FaTimes, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
-import { useAuth } from '@clerk/nextjs';
+import { SignOutButton, useAuth } from '@clerk/nextjs';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('/');
   const { isLoaded, userId } = useAuth();
-  
+
   const isSignedIn = isLoaded && !!userId;
 
   const toggleMobileMenu = () => {
@@ -21,7 +22,7 @@ const Header = () => {
         <div className='flex items-center space-x-2'>
           <FaRobot className='text-xl' />
           <Link href={'/'} className='text-xl font-bold hover:text-blue-100 transition-colors'>
-            MitraChat AI
+             MitraChat AI
           </Link>
         </div>
 
@@ -30,33 +31,40 @@ const Header = () => {
           {isSignedIn ? (
             <>
               <Link
+                onClick={() => setActiveTab('create')}
                 href={'/create-chatbot'}
-                className='flex items-center gap-1 hover:text-blue-100 transition-colors'
+                className={`flex items-center gap-1 hover:text-gray-200 transition-colors ${ activeTab === 'create' ? 'text-blue-200 ' : ''}`}
               >
                 <FaPlus className='text-sm' />
                 <span>Create</span>
               </Link>
               <Link
+              onClick={() => setActiveTab('edit')}
                 href={'/edit-chatbot'}
-                className='flex items-center gap-1 hover:text-blue-100 transition-colors'
+                className={`flex items-center gap-1 hover:text-gray-200 transition-colors ${ activeTab === 'edit' ? 'text-blue-200 ' : ''}`}
               >
                 <FaEdit className='text-sm' />
                 <span>Edit</span>
               </Link>
               <Link
+              onClick={() => setActiveTab('session')}
                 href={'/review-sessions'}
-                className='flex items-center gap-1 hover:text-blue-100 transition-colors'
+                className={`flex items-center gap-1 hover:text-gray-200 transition-colors ${ activeTab === 'session' ? 'text-blue-200 ' : ''}`}
               >
                 <FaHistory className='text-sm' />
                 <span>Sessions</span>
               </Link>
+
+              <span className='flex items-center gap-1 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-md transition-colors font-medium'>
+                <SignOutButton />
+              </span>
             </>
           ) : (
             <Link
               href={'/sign-in'}
               className='flex items-center gap-1 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-md transition-colors font-medium'
             >
-              <FaUserPlus className='text-sm' />
+              {/* <FaUserPlus className='text-sm' /> */}
               <span>Sign Up</span>
             </Link>
           )}
@@ -101,14 +109,16 @@ const Header = () => {
                     <FaHistory className='text-sm' />
                     <span>Review Sessions</span>
                   </Link>
+                  <span className=' flex items-center justify-center gap-1 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-md transition-colors font-medium'>
+                    <SignOutButton />
+                  </span>
                 </>
               ) : (
                 <Link
                   href={'/sign-in'}
-                  className='flex items-center gap-2 py-2 bg-white text-blue-600 hover:bg-blue-50 px-4 rounded-md transition-colors'
-                  onClick={toggleMobileMenu}
+                  className='flex items-center justify-center gap-1 bg-white text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-md transition-colors font-medium'
                 >
-                  <FaUserPlus className='text-sm' />
+                  {/* <FaUserPlus className='text-sm' /> */}
                   <span>Sign Up</span>
                 </Link>
               )}
